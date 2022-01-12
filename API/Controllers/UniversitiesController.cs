@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using API.Models;
 using API.Repository.Data;
@@ -18,5 +19,22 @@ namespace API.Controllers
         {
             this.universityRepository = universityRepository;
         }
+
+        [HttpGet]
+        [Route("UniversityCount")]
+        public ActionResult UniversityCount()
+        {
+            var result = universityRepository.UniversityCount();
+            if (result != null)
+            {
+                return Ok(new { status = HttpStatusCode.OK, result, message = "Data loaded" });
+            }
+            return Ok(new { status = HttpStatusCode.NotFound, message = "Error data not found" });
+
+        }
+
+
     }
+
+
 }
