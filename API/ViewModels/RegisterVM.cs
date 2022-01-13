@@ -9,6 +9,7 @@ namespace API.ViewModels
 {
     public class RegisterVM
     {
+        [Key]
         public string NIK { get; set; }
 
         //[Required(ErrorMessage = "{0} is a mandatory field")]
@@ -54,11 +55,13 @@ namespace API.ViewModels
 
         //[Required(ErrorMessage = "{0} is a mandatory field")]
         public int UniversityId { get; set; }
+        public string UniversityName{ get; set; }
 
         //[Required(ErrorMessage = "{0} is a mandatory field")]
         public int EducationId { get; set; }
 
-    
+        public List<string> RoleName { get; set; }
+        //public List<Education> Education { get; set; }
 
     }
 

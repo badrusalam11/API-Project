@@ -143,3 +143,5 @@ C:\Users\User\source\repos\API\Client\bin\Debug\netcoreapp3.1\runtimes\win\lib\n
 C:\Users\User\source\repos\API\Client\bin\Debug\netcoreapp3.1\runtimes\win\lib\netstandard2.0\System.Security.Cryptography.ProtectedData.dll
 C:\Users\User\source\repos\API\Client\bin\Debug\netcoreapp3.1\API.dll
 C:\Users\User\source\repos\API\Client\bin\Debug\netcoreapp3.1\API.pdb
+C:\Users\User\source\repos\API\Client\obj\Debug\netcoreapp3.1\Razor\Views\Login\Index.cshtml.g.cs
+C:\Users\User\source\repos\API\Client\obj\Debug\netcoreapp3.1\Razor\Views\Shared\_LayoutLogin.cshtml.g.cs

@@ -1,22 +1,35 @@
 ﻿$(document).ready(function () {
     $('#peserta').DataTable(
         {
-            ajax: { url: "https://localhost:44378/API/Employees/getregisterdata", dataSrc: 'result' },
+            ajax: { url: "https://localhost:44361/employees/getregisterdata", dataSrc: '' },
             dataType: 'json',
             columns: [
-                //{
-                //    data: null,
-                //    //bSortable: false,
-                //    render: (data, type, row, meta) => {
-                //        //return (meta.row + 1);
-                //        return meta.row + meta.settings._iDisplayStart + 1;
-                //    }
-                //},
+                {
+                    data: null,
+                    //bSortable: false,
+                    render: (data, type, row, meta) => {
+                        //return (meta.row + 1);
+                        return meta.row + meta.settings._iDisplayStart + 1;
+                    }
+                },
                 { data: "nik" },
-                { data: "fullName" },
+                {
+                    data: "null",
+                    render: (data, type, row, meta) => {
+                        return row['firstName']+ ' ' + row['lastName'];
+                    }
+                },
                 { data: "phone" },
                 { data: "email" },
-                { data: "gender" },
+                {
+                    data: "null",
+                    render: (data, type, row, meta) => {
+                        if (row['gender']===0) {
+                            return 'Laki-laki';
+                        }
+                        return 'Perempuan';
+                    }
+                },
 
                 {
                     data: "null",
@@ -25,9 +38,9 @@
                         return dataGet.toLocaleDateString();
                     }
                 },
-                { data: "education.degree" },
-                { data: "education.gpa" },
-                { data: "education.university.name" },
+                { data: "degree" },
+                { data: "gpa" },
+                { data: "universityName" },
                 { data: "roleName" },
                 {
                     data: "salary",
@@ -190,7 +203,7 @@ function Edit() {
         })
         table.ajax.reload();
     }).fail((error) => {
-        console.log(result);
+        console.log(error);
 
     })
 }
@@ -221,45 +234,45 @@ function Insert() {
     obj.UniversityId = parseInt($("#university").val());
     obj.Salary = parseInt($("#salary").val());
 
-    const myJSON = JSON.stringify(obj);
-    console.log(myJSON);
-
-
+    //const myJSON = JSON.stringify(obj);
+    //console.log(myJSON);
+    console.log(obj);
+    
     //isi dari object kalian buat sesuai dengan bentuk object yang akan di post
     let table = $('#peserta').DataTable();
     $.ajax({
-        url: "https://localhost:44378/api/employees/register",
-        contentType: "application/json;charset=utf-8",
+        url: "https://localhost:44361/employees/register",
+        //contentType: "application/json;charset=utf-8",
         type: "POST",
-        data: myJSON //jika 415 unsupported bisa cari cara JSON stringify dll
+        data: obj //jika 415 unsupported bisa cari cara JSON stringify dll
     }).done((result) => {
         //buat alert pemberitahuan jika success
         console.log(result);
         //alert(result.message);
-        var ikon;
-        var pesan;
-        if (result.status === 200) {
-            ikon = 'success';
-            pesan = 'Success';
-        }
-        else {
-            ikon = 'error';
-            pesan = 'Error';
-        }
+        //var ikon;
+        //var pesan;
+        //if (result.status === 200) {
+        //    ikon = 'success';
+        //    pesan = 'Success';
+        //}
+        //else {
+        //    ikon = 'error';
+        //    pesan = 'Error';
+        //}
         Swal.fire({
-            icon: ikon,
-            title: pesan,
+            icon: 'success',
+            title: 'Success',
             text: result.message
         })
         table.ajax.reload();
     }).fail((error) => {
-        console.log(result);
+        console.log(error);
         //alert(result.message);
-        //Swal.fire({
-        //    icon: 'error',
-        //    title: 'Oops...',
-        //    text: result.message
-        //})
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: error.responseJSON.title
+        })
 
     })
 }
@@ -307,7 +320,7 @@ function Delete(nik) {
             let table = $('#peserta').DataTable();
             $.ajax({
                 type: 'DELETE',
-                url: "https://localhost:44378/api/Employees/" + nik,
+                url: "https://localhost:44361/employees/deleteregisterdata/" + nik,
                 success: function (result) {
                     console.log(result);
                     table.ajax.reload();
@@ -336,10 +349,10 @@ function ShowEdit(nik) {
     UniversitiesOption();
     $("#form-nik").attr("readonly", true);
     $.ajax({
-        url: "https://localhost:44378/API/Employees/getregisterdata/" + nik,
+        url: "https://localhost:44361/employees/GetRegisterDataNIK/" + nik,
         contentType: "application/json;charset=utf-8"
     }).done((result) => {
-        let data = result.result[0];
+        let data = result;
         //console.log(data);
         const myArray = data.birthDate.split("T");
         var h1 = "Edit data";
@@ -352,20 +365,18 @@ function ShowEdit(nik) {
         $("#phone").val(data.phone);
         $("#birthDate").val(myArray[0]);
         $("#gender").val(data.gender);
-        $("#degree").val(data.education.degree);
-        $("#gpa").val(data.education.gpa);
-        $("#university").val(data.education.university.id);
+        $("#degree").val(data.degree);
+        $("#gpa").val(data.gpa);
+        $("#university").val(data.universityId);
         $("#salary").val(data.salary);
         //$("button.btn-primary").attr("id", "insert");
         $("#submit").html("Edit");
-        //const myJson = JSON.stringify(obj);
-        //console.log(myJson);
-
+        
     }).fail((error) => {
         console.log(error);
     })
 
-    console.log(myJson);
+    
 }
 
 

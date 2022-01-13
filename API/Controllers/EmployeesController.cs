@@ -32,7 +32,8 @@ namespace API.Controllers
 
             if (register > 0)
             {
-                return Ok(new { status = HttpStatusCode.OK, register, message = "Register Success" });
+                //return Ok(new { status = HttpStatusCode.OK, register, message = "Register Success" });
+                return Ok(register);
 
             }
             else if (register == -2)
@@ -65,7 +66,8 @@ namespace API.Controllers
             var result = employeeRepository.GetRegisterData();
             if (result != null)
             {
-               return Ok(new { status = HttpStatusCode.OK, result, message="Data loaded" });
+               //return Ok(new { status = HttpStatusCode.OK, result, message="Data loaded" });
+               return Ok(result);
             }
             return Ok(new { status = HttpStatusCode.NotFound, message = "Error data not found" });
 
@@ -78,7 +80,8 @@ namespace API.Controllers
             var result = employeeRepository.GetRegisterData(NIK);
             if (result != null)
             {
-                return Ok(new { status = HttpStatusCode.OK, result, message = "Data loaded" });
+                //return Ok(new { status = HttpStatusCode.OK, result, message = "Data loaded" });
+                return Ok(result);
             }
             return Ok(new { status = HttpStatusCode.NotFound, message = "Error data not found" });
 
@@ -89,7 +92,7 @@ namespace API.Controllers
         public ActionResult UpdateRegisterData(RegisterVM registerVM)
         {
             int result = employeeRepository.UpdateRegisterData(registerVM);
-            if (result > 1)
+            if (result > 0)
             {
                 return Ok(new { status = HttpStatusCode.OK, result, message = "Employee data Updated succefully" });
             }
@@ -153,6 +156,25 @@ namespace API.Controllers
             //}
             //return Ok(employeeRepository.Update(employee));
         }
+
+        [HttpDelete]
+        [Route("DeleteRegisterData/{NIK}")]
+        public ActionResult DeleteRegisterData(string NIK)
+        {
+            var find = repository.Get(NIK);
+            if (find == null)
+            {
+                return Ok(new { status = HttpStatusCode.NotFound, find, message = $"Error data with key = {NIK} not found" });
+            }
+            else
+            {
+                int delete;
+                employeeRepository.DeleteRegisterData(NIK);
+                delete = repository.Delete(NIK);
+                return Ok(new { status = HttpStatusCode.OK, delete, message = $"Data with Key = {NIK} deleted succefully" });
+            }
+        }
+
 
         [HttpPost]
         [Route("Input")]

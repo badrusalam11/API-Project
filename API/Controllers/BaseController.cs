@@ -54,6 +54,7 @@ namespace API.Controllers
             int update = repository.Update(entity);
             return Ok(update);
         }
+
         [HttpDelete("{key}")]
         public ActionResult<Entity> Delete(Key key)
         {

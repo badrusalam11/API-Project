@@ -225,64 +225,107 @@ namespace API.Repository.Data
                         select new
                         {
                             nik = employee.NIK,
-                            fullName = employee.FirstName + " " + employee.LastName,
+                            firstName = employee.FirstName,
+                            lastName = employee.LastName,
                             phone = employee.Phone,
                             email = employee.Email,
                             gender = employee.Gender == 0 ? "Male" : "Female",
                             birthDate = employee.BirthDate,
                             salary = employee.Salary,
-                            Education = new
-                            {
-                                gpa = education.GPA,
-                                degree = education.Degree,
-                                University = new
-                                {
-                                    name = university.Name
-                                }
-                            },
+                            //Education = new
+                            //{
+                            //    gpa = education.GPA,
+                            //    degree = education.Degree,
+                            //    University = new
+                            //    {
+                            //        name = university.Name
+                            //    }
+                            //},
+                            GPA = education.GPA,
+                            degree = education.Degree,
+                            universityId = education.University.UniversityId,
+                            universityName = education.University.Name,
                             roleName = myContext.AccountRoles.Where(accountrole => accountrole.NIK == employee.NIK).Select(accountrole => accountrole.Role.Name).ToList()
                         };
             return query;
             // lazy loading with query
         }
 
-        public Object GetRegisterData(string nik)
+        //public Object GetRegisterData(string nik)
+        //{
+        //    var query = from employee in myContext.Employees
+        //                join account in myContext.Accounts
+        //                    on employee.NIK equals account.NIK
+        //                join profiling in myContext.Profilings
+        //                    on account.NIK equals profiling.NIK
+        //                join education in myContext.Educations
+        //                    on profiling.EducationId equals education.EducationId
+        //                join university in myContext.Universities
+        //                    on education.UniversityId equals university.UniversityId
+        //                where employee.NIK == nik
+        //                select new RegisterVM
+        //                {
+        //                    NIK = employee.NIK,
+        //                    FirstName = employee.FirstName,
+        //                    LastName = employee.LastName,
+        //                    Phone = employee.Phone,
+        //                    Email = employee.Email,
+        //                    Gender = employee.Gender,
+        //                    BirthDate = employee.BirthDate,
+        //                    Salary = employee.Salary,
+        //                    //Education = new
+        //                    //{
+        //                    //    gpa = education.GPA,
+        //                    //    degree = education.Degree,
+        //                    //    University = new
+        //                    //    {
+        //                    //        id = university.UniversityId,
+        //                    //        name = university.Name
+        //                    //    }
+        //                    //},
+        //                    GPA = education.GPA,
+        //                    Degree = education.Degree,
+        //                    UniversityId = education.University.UniversityId,
+        //                    UniversityName = education.University.Name,
+        //                    roleName = myContext.AccountRoles.Where(accountrole => accountrole.NIK == employee.NIK).Select(accountrole => accountrole.Role.Name).ToList()
+        //                };
+        //    return query;
+        //    // lazy loading with query
+        //}
+
+        public RegisterVM GetRegisterData(string nik)
         {
-            var query = from employee in myContext.Employees
-                        join account in myContext.Accounts
-                            on employee.NIK equals account.NIK
-                        join profiling in myContext.Profilings
-                            on account.NIK equals profiling.NIK
-                        join education in myContext.Educations
-                            on profiling.EducationId equals education.EducationId
-                        join university in myContext.Universities
-                            on education.UniversityId equals university.UniversityId
-                        where employee.NIK == nik
-                        select new
-                        {
-                            nik = employee.NIK,
-                            firstName = employee.FirstName,
-                            lastName = employee.LastName,
-                            phone = employee.Phone,
-                            email = employee.Email,
-                            gender = employee.Gender,
-                            birthDate = employee.BirthDate,
-                            salary = employee.Salary,
-                            Education = new
-                            {
-                                gpa = education.GPA,
-                                degree = education.Degree,
-                                University = new
-                                {
-                                    id = university.UniversityId,
-                                    name = university.Name
-                                }
-                            },
-                            roleName = myContext.AccountRoles.Where(accountrole => accountrole.NIK == employee.NIK).Select(accountrole => accountrole.Role.Name).ToList()
-                        };
-            return query;
-            // lazy loading with query
+            var query = myContext.Employees.Where(e => e.NIK == nik)
+                .Include(e => e.Account)
+                .ThenInclude(p => p.Profiling)
+                .ThenInclude(e => e.Education)
+                .ThenInclude(u => u.University)
+                .FirstOrDefault();
+            if (query == null)
+            {
+                return null;
+            }
+            var selectedData = new RegisterVM
+            {
+                NIK = query.NIK,
+                FirstName = query.FirstName,
+                LastName = query.LastName,
+                Phone = query.Phone,
+                Email = query.Email,
+                Gender = query.Gender,
+                BirthDate = query.BirthDate,
+                Salary = query.Salary,
+                GPA = query.Account.Profiling.Education.GPA,
+                Degree = query.Account.Profiling.Education.Degree,
+                UniversityId = query.Account.Profiling.Education.University.UniversityId,
+                UniversityName = query.Account.Profiling.Education.University.Name,
+                RoleName = myContext.AccountRoles.Where(accountrole => accountrole.NIK == query.NIK).Select(accountrole => accountrole.Role.Name).ToList()
+
+            };
+            return selectedData;
+
         }
+
 
         public int UpdateRegisterData(RegisterVM registerVM)
         {
@@ -291,6 +334,7 @@ namespace API.Repository.Data
             {
                 return hasilCek;
             }
+           
             var employee = new Employee
             {
                 NIK = registerVM.NIK,
@@ -314,6 +358,7 @@ namespace API.Repository.Data
                 GPA = registerVM.GPA,
                 UniversityId = registerVM.UniversityId
             };
+            myContext.Entry(findEducationId).State = EntityState.Detached;
             myContext.Entry(education).State = EntityState.Modified;
             var result = myContext.SaveChanges();
             return result;
@@ -326,6 +371,7 @@ namespace API.Repository.Data
             var cekPhone = myContext.Employees.ToList().Where(e => e.Phone == registerVM.Phone);
             var cekEmail = myContext.Employees.ToList().Where(e => e.Email == registerVM.Email);
 
+            myContext.Entry(data).State = EntityState.Detached;
 
             if (data != null)
             {
@@ -351,6 +397,15 @@ namespace API.Repository.Data
                 return -2;
             }
             return 1;
+        }
+
+        public int DeleteRegisterData(string NIK)
+        {
+            var profiling = myContext.Profilings.Where(p => p.NIK == NIK).FirstOrDefault();
+            var education = myContext.Educations.Where(e => e.EducationId == profiling.EducationId).FirstOrDefault();
+            myContext.Remove(education);
+            var respond = myContext.SaveChanges();
+            return respond;
         }
 
 

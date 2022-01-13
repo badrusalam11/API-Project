@@ -90,3 +90,5 @@ $(document).ready(function () {
 
     })
 });
+
+//$(.bg-login-image).css('background-image', 'url(' + https://www.linovhr.com/wp-content/uploads/2020/09/employee-database.jpg + ')');
