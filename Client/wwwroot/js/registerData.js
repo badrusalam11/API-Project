@@ -173,22 +173,22 @@ function Edit() {
     obj.UniversityId = parseInt($("#university").val());
     obj.Salary = parseInt($("#salary").val());
 
-    const myJSON = JSON.stringify(obj);
-    console.log(myJSON);
+    //const myJSON = JSON.stringify(obj);
+    //console.log(myJSON);
 
 
     //isi dari object kalian buat sesuai dengan bentuk object yang akan di post
     let table = $('#peserta').DataTable();
     $.ajax({
-        url: "https://localhost:44378/api/employees/UpdateRegisterData",
-        contentType: "application/json;charset=utf-8",
+        url: "https://localhost:44361/employees/updateregisterdata",
+        //contentType: "application/json;charset=utf-8",
         type: "PUT",
-        data: myJSON 
+        data: obj 
     }).done((result) => {
         console.log(result);
         var ikon;
         var pesan;
-        if (result.status === 200) {
+        if (result === 200) {
             ikon = 'success';
             pesan = 'Success';
         }
@@ -199,11 +199,16 @@ function Edit() {
         Swal.fire({
             icon: ikon,
             title: pesan,
-            text: result.message
+            text: 'Data Berhasil di Update'
         })
         table.ajax.reload();
     }).fail((error) => {
         console.log(error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: error.responseJSON.title
+        })
 
     })
 }

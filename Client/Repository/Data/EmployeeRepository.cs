@@ -61,7 +61,7 @@ namespace Client.Repository.Data
             return result.StatusCode;
         }
 
-        public HttpStatusCode EditRegisterData(RegisterVM registerVM)
+        public HttpStatusCode UpdateRegisterData(RegisterVM registerVM)
         {
             StringContent content = new StringContent(JsonConvert.SerializeObject(registerVM), Encoding.UTF8, "application/json");
             var result = httpClient.PutAsync(request + "UpdateRegisterData/", content).Result;

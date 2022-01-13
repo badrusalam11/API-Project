@@ -45,10 +45,10 @@ namespace Client.Controllers
             return Json(result);
         }
 
-        [HttpPost("Employees/UpdateRegisterData")]
+        [HttpPut("Employees/UpdateRegisterData")]
         public JsonResult UpdateRegisterData(RegisterVM registerVM)
         {
-            var result = repository.EditRegisterData(registerVM);
+            var result = repository.UpdateRegisterData(registerVM);
             return Json(result);
         }
 
