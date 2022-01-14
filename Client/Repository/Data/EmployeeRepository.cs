@@ -54,18 +54,37 @@ namespace Client.Repository.Data
             return entity;
         }
 
-        public HttpStatusCode Register(RegisterVM registerVM)
+        public Object Register(RegisterVM registerVM)
         {
             StringContent content = new StringContent(JsonConvert.SerializeObject(registerVM), Encoding.UTF8, "application/json");
-            var result = httpClient.PostAsync(address.link + request + "Register/", content).Result;
-            return result.StatusCode;
+            //var result = httpClient.PostAsync(address.link + request + "Register/", content).Result;
+            //return result.StatusCode;
+
+            Object entities = new Object();
+
+            using (var response = httpClient.PostAsync(request + "Register/", content).Result)
+            {
+                string apiResponse = response.Content.ReadAsStringAsync().Result;
+                entities = JsonConvert.DeserializeObject<Object>(apiResponse);
+            }
+
+            return entities;
+
         }
 
-        public HttpStatusCode UpdateRegisterData(RegisterVM registerVM)
+        public Object UpdateRegisterData(RegisterVM registerVM)
         {
             StringContent content = new StringContent(JsonConvert.SerializeObject(registerVM), Encoding.UTF8, "application/json");
-            var result = httpClient.PutAsync(request + "UpdateRegisterData/", content).Result;
-            return result.StatusCode;
+            //var result = httpClient.PutAsync(request + "UpdateRegisterData/", content).Result;
+            //return result.StatusCode;
+            Object entity = new Object();
+
+            using (var response = httpClient.PutAsync(request + "UpdateRegisterData/", content).Result)
+            {
+                string apiResponse = response.Content.ReadAsStringAsync().Result;
+                entity = JsonConvert.DeserializeObject<Object>(apiResponse);
+            }
+            return entity;
         }
 
         public HttpStatusCode DeleteRegisterData(string NIK)

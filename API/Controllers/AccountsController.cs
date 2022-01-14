@@ -65,7 +65,7 @@ namespace API.Controllers
 
 
 
-                return Ok(new { status = HttpStatusCode.OK, idtoken, message = "Login Success" });
+                return Ok(new JWTokenVM{ status = HttpStatusCode.OK, idToken = idtoken, message = "Login Success" });
             }
             else if (login == 0)
             {

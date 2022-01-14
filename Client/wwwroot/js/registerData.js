@@ -144,7 +144,7 @@ function formatRupiah(angka, prefix) {
 
 $('#registerForm').submit(function (e) {
     e.preventDefault();
-    if ($("#submit").html() == "Save Change") {
+    if ($("#submit").html() == "Login") {
         // do ajax now
         Insert();
         //$('#registerForm').trigger('reset');
@@ -185,10 +185,10 @@ function Edit() {
         type: "PUT",
         data: obj 
     }).done((result) => {
-        console.log(result);
+        console.log(result.status);
         var ikon;
         var pesan;
-        if (result === 200) {
+        if (result.status === 200) {
             ikon = 'success';
             pesan = 'Success';
         }
@@ -199,7 +199,7 @@ function Edit() {
         Swal.fire({
             icon: ikon,
             title: pesan,
-            text: 'Data Berhasil di Update'
+            text: result.message
         })
         table.ajax.reload();
     }).fail((error) => {
@@ -254,19 +254,19 @@ function Insert() {
         //buat alert pemberitahuan jika success
         console.log(result);
         //alert(result.message);
-        //var ikon;
-        //var pesan;
-        //if (result.status === 200) {
-        //    ikon = 'success';
-        //    pesan = 'Success';
-        //}
-        //else {
-        //    ikon = 'error';
-        //    pesan = 'Error';
-        //}
+        var ikon;
+        var pesan;
+        if (result.status === 200) {
+            ikon = 'success';
+            pesan = 'Success';
+        }
+        else {
+            ikon = 'error';
+            pesan = 'Error';
+        }
         Swal.fire({
-            icon: 'success',
-            title: 'Success',
+            icon: ikon,
+            title: pesan,
             text: result.message
         })
         table.ajax.reload();
@@ -294,7 +294,7 @@ function ResetForm() {
 
 function UniversitiesOption() {
     $.ajax({
-        url: "https://localhost:44378/api/universities",
+        url: "https://localhost:44361/universities/getall",
     }).done((result) => {
         //buat alert pemberitahuan jika success
         var option = "<option selected>Choose...</option>";
@@ -358,7 +358,7 @@ function ShowEdit(nik) {
         contentType: "application/json;charset=utf-8"
     }).done((result) => {
         let data = result;
-        //console.log(data);
+        console.log(data);
         const myArray = data.birthDate.split("T");
         var h1 = "Edit data";
         $("#exampleModalLabel").html(h1);

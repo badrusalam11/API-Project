@@ -32,8 +32,8 @@ namespace API.Controllers
 
             if (register > 0)
             {
-                //return Ok(new { status = HttpStatusCode.OK, register, message = "Register Success" });
-                return Ok(register);
+                return Ok(new { status = HttpStatusCode.OK, register, message = "Register Success" });
+                //return Ok(register);
 
             }
             else if (register == -2)
