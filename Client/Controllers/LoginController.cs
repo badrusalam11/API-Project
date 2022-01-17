@@ -15,7 +15,6 @@ namespace Client.Controllers
     {
 
         private LoginRepository repository;
-        public System.Web.SessionState.HttpSessionState Session { get; }
 
         public LoginController(LoginRepository repository) : base(repository)
         {
@@ -24,7 +23,7 @@ namespace Client.Controllers
 
         public IActionResult Index()
         {
-            string JWToken = (string)(Session["JWToken"]);
+            
             return View();
         }
 
